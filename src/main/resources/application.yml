@@ -1,0 +1,42 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: car-recommendation
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/zhixuanche?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: zhixuanche_user
+    password: zhixuanche_pass
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# 静态资源配置
+resource:
+  static-locations: http://localhost:8090/images/
+  avatar-path: /avatars/
+  car-path: /cars/
+
+# JWT配置
+jwt:
+  secret: your-secret-key
+  expiration: 86400000  # 24小时
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.zhixuanche: DEBUG 
