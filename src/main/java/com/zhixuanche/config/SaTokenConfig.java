@@ -20,7 +20,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
             SaRouter.match("/**")
                     .notMatch(
                         // 用户认证接口
-                        "/auth/login", "/auth/register", "/auth/logout",
+                        "/users/login", "/users/register", "/users/logout",
                         // 静态资源
                         "/static/**", "/favicon.ico",
                         // Swagger UI 相关
