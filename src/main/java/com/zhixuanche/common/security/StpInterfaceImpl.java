@@ -24,7 +24,15 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        User user = userService.getUserById((Integer) loginId);
+        // 安全地转换loginId为Integer
+        Integer userId;
+        if (loginId instanceof Integer) {
+            userId = (Integer) loginId;
+        } else {
+            userId = Integer.parseInt(loginId.toString());
+        }
+        
+        User user = userService.getUserById(userId);
         List<String> permissionList = new ArrayList<>();
         
         if (user != null) {
@@ -67,7 +75,15 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        User user = userService.getUserById((Integer) loginId);
+        // 安全地转换loginId为Integer
+        Integer userId;
+        if (loginId instanceof Integer) {
+            userId = (Integer) loginId;
+        } else {
+            userId = Integer.parseInt(loginId.toString());
+        }
+        
+        User user = userService.getUserById(userId);
         List<String> roleList = new ArrayList<>();
         if (user != null) {
             // 添加用户类型对应的角色
