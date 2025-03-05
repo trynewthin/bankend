@@ -4,7 +4,6 @@ import com.zhixuanche.user.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 用户Mapper接口

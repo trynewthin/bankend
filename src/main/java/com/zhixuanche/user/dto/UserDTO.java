@@ -1,5 +1,6 @@
 package com.zhixuanche.user.dto;
 
+import com.zhixuanche.user.entity.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,4 +29,17 @@ public class UserDTO {
 
     @NotBlank(message = "用户类型不能为空")
     private String userType;
+
+    /**
+     * 获取用户类型枚举值
+     * @return UserType枚举值
+     * @throws RuntimeException 当用户类型无效时抛出异常
+     */
+    public UserType getUserTypeEnum() {
+        try {
+            return UserType.valueOf(userType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("无效的用户类型");
+        }
+    }
 } 
