@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    platform: linux/amd64
+    container_name: zhixuanche_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: zhixuanche123
+      MYSQL_DATABASE: zhixuanche
+      MYSQL_USER: zhixuanche_user
+      MYSQL_PASSWORD: zhixuanche_pass
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_HOST: '%'
+      LANG: C.UTF-8
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+      --bind-address=0.0.0.0
+      --init-connect='SET NAMES utf8mb4'
+      --skip-character-set-client-handshake
+    networks:
+      - zhixuanche_net
+
+  nginx:
+    image: nginx:latest
+    container_name: zhixuanche_nginx
+    restart: always
+    ports:
+      - "8090:80"
+    volumes:
+      - ./public:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - mysql
+    networks:
+      - zhixuanche_net
+
+networks:
+  zhixuanche_net:
+    driver: bridge 
