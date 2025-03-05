@@ -4,9 +4,12 @@ import com.zhixuanche.user.entity.User;
 import com.zhixuanche.user.entity.enums.UserType;
 import com.zhixuanche.user.mapper.UserMapper;
 import com.zhixuanche.user.service.UserService;
+import com.zhixuanche.user.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -16,8 +19,13 @@ import java.util.Date;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @Override
     @Transactional
@@ -33,10 +41,14 @@ public class UserServiceImpl implements UserService {
         // 创建新用户
         User user = new User();
         user.setUsername(username);
-        user.setPassword(password); // 直接使用明文密码
+        user.setPassword(password);
         user.setEmail(email);
         user.setPhone(phone);
-        user.setUserType(UserType.valueOf(userType)); // 将String转换为UserType枚举
+        try {
+            user.setUserType(UserType.valueOf(userType.toUpperCase())); // 确保使用大写
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("无效的用户类型");
+        }
         user.setRegisterTime(new Date());
         user.setStatus(1);
 
@@ -105,8 +117,24 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateAvatar(Integer userId, String avatarUrl) {
-        User user = new User();
-        user.setUserId(userId);
+        // 1. 获取用户当前信息
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 2. 删除旧头像
+        String oldAvatarUrl = user.getAvatar();
+        if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
+            try {
+                fileStorageService.deleteFile(oldAvatarUrl);
+            } catch (Exception e) {
+                // 删除旧文件失败不影响新文件的上传
+                log.warn("删除旧头像文件失败: {}", e.getMessage());
+            }
+        }
+
+        // 3. 更新用户头像URL
         user.setAvatar(avatarUrl);
         return userMapper.update(user) > 0;
     }
