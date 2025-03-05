@@ -3,12 +3,14 @@
 ## 启动服务
 
 ```bash
+cd database
 docker-compose up -d
 ```
 
 ## 停止服务
 
 ```bash
+cd database
 docker-compose down
 ```
 
