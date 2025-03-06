@@ -37,7 +37,7 @@ mybatis-plus:
       logic-not-delete-value: 0
     banner: false
     table-underline: true
-  type-handlers-package: com.zhixuanche.user.config
+  type-handlers-package: com.zhixuanche.user.config,com.zhixuanche.behavior.config
 
 # 静态资源配置
 resource:
