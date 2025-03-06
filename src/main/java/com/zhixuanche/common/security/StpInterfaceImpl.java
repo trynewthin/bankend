@@ -24,7 +24,6 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-<<<<<<< HEAD
         // 安全地转换loginId为Integer
         Integer userId;
         if (loginId instanceof Integer) {
@@ -34,9 +33,6 @@ public class StpInterfaceImpl implements StpInterface {
         }
         
         User user = userService.getUserById(userId);
-=======
-        User user = userService.getUserById((Integer) loginId);
->>>>>>> 50c7cad (全局异常管理，mybais，satoken添加)
         List<String> permissionList = new ArrayList<>();
         
         if (user != null) {
@@ -79,7 +75,6 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-<<<<<<< HEAD
         // 安全地转换loginId为Integer
         Integer userId;
         if (loginId instanceof Integer) {
@@ -89,9 +84,6 @@ public class StpInterfaceImpl implements StpInterface {
         }
         
         User user = userService.getUserById(userId);
-=======
-        User user = userService.getUserById((Integer) loginId);
->>>>>>> 50c7cad (全局异常管理，mybais，satoken添加)
         List<String> roleList = new ArrayList<>();
         if (user != null) {
             // 添加用户类型对应的角色
