@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.lang.NonNull;
 
 /**
  * 用户ID拦截器
@@ -16,7 +17,7 @@ public class UserIdInterceptor implements HandlerInterceptor {
     private static final Logger log = LoggerFactory.getLogger(UserIdInterceptor.class);
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         log.info("UserIdInterceptor被调用: URI={}", request.getRequestURI());
         
         // 检查用户是否已登录
