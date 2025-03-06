@@ -1,9 +1,11 @@
 package com.zhixuanche.config;
 
+import com.zhixuanche.common.interceptor.UserIdInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.lang.NonNull;
 
@@ -19,6 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .exposedHeaders("Authorization")
                 .allowCredentials(true)
                 .maxAge(3600);
+    }
+    
+    /**
+     * 注册拦截器
+     */
+    @Override
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        // 添加用户ID拦截器，只拦截行为记录和收藏模块的请求
+        registry.addInterceptor(new UserIdInterceptor())
+                .addPathPatterns("/api/behavior/**", "/api/favorites/**");
     }
     
     /**
