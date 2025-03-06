@@ -3,7 +3,6 @@ package com.zhixuanche.common.exception;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
-<<<<<<< HEAD
 import com.zhixuanche.car.exception.CarException;
 import com.zhixuanche.common.response.ApiResponse;
 import com.zhixuanche.common.response.Result;
@@ -20,13 +19,6 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.List;
 import java.util.stream.Collectors;
-=======
-import com.zhixuanche.common.response.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
->>>>>>> 50c7cad (全局异常管理，mybais，satoken添加)
 
 /**
  * 全局异常处理器
@@ -62,7 +54,6 @@ public class GlobalExceptionHandler {
         logger.debug("角色不匹配：{}", e.getMessage());
         return ApiResponse.error(403, "无权限访问");
     }
-<<<<<<< HEAD
 
     /**
      * 处理车辆模块业务异常
@@ -131,8 +122,6 @@ public class GlobalExceptionHandler {
         logger.warn("文件上传超出大小限制：{}", e.getMessage());
         return Result.error(400, "上传文件过大，请压缩后重试");
     }
-=======
->>>>>>> 50c7cad (全局异常管理，mybais，satoken添加)
     
     /**
      * 处理其他异常
