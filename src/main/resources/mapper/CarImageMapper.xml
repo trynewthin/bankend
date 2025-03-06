@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhixuanche.car.mapper.CarImageMapper">
+    
+    <!-- 批量查询图片 -->
+    <select id="selectBatchByCarIds" resultType="com.zhixuanche.car.entity.CarImage">
+        SELECT * FROM CarImages
+        WHERE car_id IN 
+        <foreach collection="carIds" item="carId" open="(" separator="," close=")">
+            #{carId}
+        </foreach>
+        ORDER BY upload_time DESC
+    </select>
+    
+    <!-- 查询指定类型和数量的图片 -->
+    <select id="selectByCarIdAndTypes" resultType="com.zhixuanche.car.entity.CarImage">
+        SELECT * FROM CarImages
+        WHERE car_id = #{carId} 
+        <if test="types != null and types.size() > 0">
+            AND image_type IN 
+            <foreach collection="types" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        ORDER BY 
+        <choose>
+            <when test="orderBy != null">
+                ${orderBy}
+            </when>
+            <otherwise>
+                upload_time DESC
+            </otherwise>
+        </choose>
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+    
+    <!-- 查询车辆全部图片并按类型分组 -->
+    <select id="selectGroupByType" resultType="map">
+        SELECT image_type as type, COUNT(*) as count 
+        FROM CarImages 
+        WHERE car_id = #{carId}
+        GROUP BY image_type
+    </select>
+    
+    <!-- 批量插入图片 -->
+    <insert id="batchInsert" parameterType="list">
+        INSERT INTO CarImages (car_id, image_type, image_url, upload_time)
+        VALUES 
+        <foreach collection="list" item="image" separator=",">
+            (#{image.carId}, #{image.imageType}, #{image.imageUrl}, #{image.uploadTime})
+        </foreach>
+    </insert>
+    
+    <!-- 更新图片信息 -->
+    <update id="update" parameterType="com.zhixuanche.car.entity.CarImage">
+        UPDATE CarImages
+        <set>
+            <if test="imageType != null">image_type = #{imageType},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+        </set>
+        WHERE image_id = #{imageId}
+    </update>
+    
+</mapper> 
