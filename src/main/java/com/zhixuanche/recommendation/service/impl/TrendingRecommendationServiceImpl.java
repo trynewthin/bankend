@@ -32,7 +32,15 @@ public class TrendingRecommendationServiceImpl implements TrendingRecommendation
 
     @Override
     public List<CarRecommendationDTO> getRegionalHotCars(String region, Integer limit) {
-        // TODO: 实现区域热门车辆推荐
-        return List.of();
+        if (region == null || region.trim().isEmpty()) {
+            return getHotCars(limit, 7); // 如果没有指定区域，返回全局热门
+        }
+        
+        // 获取7天内的区域热门车辆
+        String startTime = LocalDateTime.now().minusDays(7)
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        
+        // 调用Mapper查询区域热门车辆
+        return recommendationMapper.findRegionalHotCars(region, startTime, limit);
     }
 } 
