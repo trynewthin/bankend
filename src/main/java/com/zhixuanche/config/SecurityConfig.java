@@ -46,6 +46,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .notMatch(
                         // 用户认证接口
                         "/users/login", "/users/register", "/users/logout",
+                        // 公开的推荐接口
+                        "/recommendations/home",
+                        "/recommendations/hot",
+                        "/recommendations/new",
                         // 静态资源
                         "/static/**", "/favicon.ico",
                         // API文档相关
