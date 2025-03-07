@@ -1,37 +1,16 @@
 package com.zhixuanche.config;
 
-import com.zhixuanche.common.interceptor.UserIdInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.lang.NonNull;
 
+/**
+ * Web通用配置类
+ * 处理编码、静态资源等基础配置
+ */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
-    @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
-                .exposedHeaders("Authorization")
-                .allowCredentials(true)
-                .maxAge(3600);
-    }
-    
-    /**
-     * 注册拦截器
-     */
-    @Override
-    public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        // 添加用户ID拦截器，只拦截行为记录和收藏模块的请求
-        registry.addInterceptor(new UserIdInterceptor())
-                .addPathPatterns("/api/behavior/**", "/api/favorites/**");
-    }
     
     /**
      * 字符编码过滤器，确保所有请求和响应都使用UTF-8编码
