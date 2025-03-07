@@ -37,7 +37,16 @@ public enum ErrorCode {
     CAR_ALREADY_EXISTS(2002, "车辆已存在"),
     CAR_AUDIT_REJECTED(2003, "车辆审核未通过"),
     CAR_ALREADY_SOLD(2004, "车辆已售出"),
-    CAR_OPERATION_FORBIDDEN(2005, "无权操作该车辆");
+    CAR_OPERATION_FORBIDDEN(2005, "无权操作该车辆"),
+    
+    // 推荐模块错误码 (4xxx)
+    RECOMMENDATION_ERROR(4000, "推荐系统异常"),
+    GET_HOME_RECOMMENDATIONS_ERROR(4001, "获取首页推荐失败"),
+    GET_BEHAVIOR_RECOMMENDATIONS_ERROR(4002, "获取行为推荐失败"),
+    GET_PREFERENCE_RECOMMENDATIONS_ERROR(4003, "获取偏好推荐失败"),
+    GET_HOT_RECOMMENDATIONS_ERROR(4004, "获取热门推荐失败"),
+    GET_NEW_RECOMMENDATIONS_ERROR(4005, "获取新车推荐失败"),
+    INVALID_RECOMMENDATION_PARAMS(4006, "无效的推荐参数");
     
     private final int code;
     private final String message;
