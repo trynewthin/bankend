@@ -1,0 +1,57 @@
+package com.zhixuanche.common.exception;
+
+/**
+ * 系统错误码枚举
+ * 错误码设计：
+ * - 1xxx: 用户模块错误
+ * - 2xxx: 车辆模块错误
+ * - 3xxx: 行为记录模块错误
+ * - 4xxx: 智能推荐模块错误
+ * - 5xxx: 消息模块错误
+ * - 6xxx: 系统管理模块错误
+ * - 7xxx: 系统错误
+ */
+public enum ErrorCode {
+    
+    // 通用错误码 (5xxx)
+    SYSTEM_ERROR(5000, "系统错误"),
+    PARAM_ERROR(5001, "参数错误"),
+    UNAUTHORIZED(5002, "未授权"),
+    FORBIDDEN(5003, "无权限访问"),
+    
+    // 用户模块错误码 (1xxx)
+    USER_NOT_FOUND(1001, "用户不存在"),
+    USER_ALREADY_EXISTS(1002, "用户已存在"),
+    PASSWORD_ERROR(1003, "密码错误"),
+    ACCOUNT_LOCKED(1004, "账号已被锁定"),
+    INVALID_VERIFICATION_CODE(1005, "验证码无效"),
+    
+    // 经销商相关错误码 (11xx)
+    DEALER_NOT_FOUND(1101, "经销商不存在"),
+    DEALER_ALREADY_EXISTS(1102, "经销商已存在"),
+    DEALER_AUDIT_REJECTED(1103, "经销商审核未通过"),
+    DEALER_NOT_VERIFIED(1104, "经销商未认证"),
+    
+    // 车辆模块错误码 (2xxx)
+    CAR_NOT_FOUND(2001, "车辆不存在"),
+    CAR_ALREADY_EXISTS(2002, "车辆已存在"),
+    CAR_AUDIT_REJECTED(2003, "车辆审核未通过"),
+    CAR_ALREADY_SOLD(2004, "车辆已售出"),
+    CAR_OPERATION_FORBIDDEN(2005, "无权操作该车辆");
+    
+    private final int code;
+    private final String message;
+    
+    ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+    
+    public int getCode() {
+        return code;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+} 
