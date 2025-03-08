@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhixuanche.message.mapper.AppointmentMapper">
+    
+    <!-- 获取用户的预约列表 -->
+    <select id="getUserAppointments" resultType="com.zhixuanche.message.entity.Appointment">
+        SELECT a.*, c.brand, c.model, d.dealer_name
+        FROM Appointments a
+        JOIN Cars c ON a.car_id = c.car_id
+        JOIN Dealers d ON a.dealer_id = d.dealer_id
+        WHERE a.user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND a.status = #{status}
+        </if>
+        ORDER BY a.appointment_time DESC
+    </select>
+    
+    <!-- 获取经销商的预约列表 -->
+    <select id="getDealerAppointments" resultType="com.zhixuanche.message.entity.Appointment">
+        SELECT a.*, u.username as user_name, u.phone as user_phone, c.brand, c.model
+        FROM Appointments a
+        JOIN Users u ON a.user_id = u.user_id
+        JOIN Cars c ON a.car_id = c.car_id
+        WHERE a.dealer_id = #{dealerId}
+        <if test="status != null and status != ''">
+            AND a.status = #{status}
+        </if>
+        ORDER BY a.appointment_time ASC
+    </select>
+    
+    <!-- 获取待确认的预约数量 -->
+    <select id="countPendingAppointments" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM Appointments
+        WHERE dealer_id = #{dealerId}
+        AND status = '待确认'
+    </select>
+    
+    <!-- 获取用户指定车辆的预约 -->
+    <select id="getUserCarAppointments" resultType="com.zhixuanche.message.entity.Appointment">
+        SELECT *
+        FROM Appointments
+        WHERE user_id = #{userId}
+        AND car_id = #{carId}
+        ORDER BY appointment_time DESC
+    </select>
+    
+    <!-- 获取即将到来的预约 -->
+    <select id="getUpcomingAppointments" resultType="com.zhixuanche.message.entity.Appointment">
+        SELECT a.*, c.brand, c.model, d.dealer_name
+        FROM Appointments a
+        JOIN Cars c ON a.car_id = c.car_id
+        JOIN Dealers d ON a.dealer_id = d.dealer_id
+        WHERE a.user_id = #{userId}
+        AND a.appointment_time > NOW()
+        AND a.status IN ('待确认', '已确认')
+        ORDER BY a.appointment_time ASC
+    </select>
+    
+</mapper> 
