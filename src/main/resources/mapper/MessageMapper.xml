@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhixuanche.message.mapper.MessageMapper">
+    
+    <!-- 获取系统消息 -->
+    <select id="getSystemMessages" resultType="com.zhixuanche.message.entity.Message">
+        SELECT *
+        FROM Messages
+        WHERE receiver_id = #{userId}
+        AND sender_id IN (1, 2, 3, 4) <!-- 系统用户ID -->
+        <if test="readStatus != null">
+            AND read_status = #{readStatus}
+        </if>
+        <if test="messageType != null and messageType != ''">
+            AND message_type = #{messageType}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND send_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND send_time &lt;= STR_TO_DATE(CONCAT(#{endDate}, ' 23:59:59'), '%Y-%m-%d %H:%i:%s')
+        </if>
+        ORDER BY priority DESC, send_time DESC
+    </select>
+    
+    <!-- 获取互动消息 -->
+    <select id="getInteractionMessages" resultType="com.zhixuanche.message.entity.Message">
+        SELECT *
+        FROM Messages
+        WHERE receiver_id = #{userId}
+        AND sender_id NOT IN (1, 2, 3, 4) <!-- 非系统用户 -->
+        <if test="interactionType != null and interactionType != ''">
+            AND interaction_type = #{interactionType}
+        </if>
+        <if test="targetType != null and targetType != ''">
+            AND target_type = #{targetType}
+        </if>
+        <if test="readStatus != null">
+            AND read_status = #{readStatus}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND send_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND send_time &lt;= STR_TO_DATE(CONCAT(#{endDate}, ' 23:59:59'), '%Y-%m-%d %H:%i:%s')
+        </if>
+        ORDER BY send_time DESC
+    </select>
+    
+    <!-- 获取两个用户之间的消息 -->
+    <select id="getMessagesBetweenUsers" resultType="com.zhixuanche.message.entity.Message">
+        SELECT *
+        FROM Messages
+        WHERE (
+            (sender_id = #{userId1} AND receiver_id = #{userId2})
+            OR
+            (sender_id = #{userId2} AND receiver_id = #{userId1})
+        )
+        <if test="carId != null">
+            AND car_id = #{carId}
+        </if>
+        ORDER BY send_time ASC
+    </select>
+    
+    <!-- 批量标记消息为已读 -->
+    <update id="batchMarkAsRead">
+        UPDATE Messages
+        SET read_status = 1
+        WHERE message_id IN
+        <foreach collection="messageIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND receiver_id = #{userId}
+    </update>
+    
+    <!-- 获取未读消息数量统计 -->
+    <select id="getUnreadMessageCount" resultType="java.util.Map">
+        SELECT 
+            message_type as type,
+            COUNT(*) as count
+        FROM Messages
+        WHERE receiver_id = #{userId}
+        AND read_status = 0
+        GROUP BY message_type
+        
+        UNION ALL
+        
+        SELECT 
+            interaction_type as type,
+            COUNT(*) as count
+        FROM Messages
+        WHERE receiver_id = #{userId}
+        AND read_status = 0
+        AND interaction_type IS NOT NULL
+        GROUP BY interaction_type
+    </select>
+    
+    <!-- 获取未读消息总数 -->
+    <select id="getTotalUnreadCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM Messages
+        WHERE receiver_id = #{userId}
+        AND read_status = 0
+    </select>
+    
+</mapper> 
