@@ -113,15 +113,24 @@ CREATE TABLE Favorites (
     FOREIGN KEY (car_id) REFERENCES Cars(car_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 消息表
+-- 消息表（完整版）
 CREATE TABLE Messages (
     message_id INT PRIMARY KEY AUTO_INCREMENT,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
     car_id INT,
     content TEXT NOT NULL,
+    title VARCHAR(200),
+    message_type VARCHAR(50),
+    interaction_type VARCHAR(50),
+    target_type VARCHAR(50),
+    target_id VARCHAR(50),
     send_time DATETIME NOT NULL,
     read_status TINYINT NOT NULL DEFAULT 0,
+    expire_time DATETIME,
+    priority TINYINT DEFAULT 3,
+    action_type VARCHAR(50),
+    action_value VARCHAR(500),
     FOREIGN KEY (sender_id) REFERENCES Users(user_id),
     FOREIGN KEY (receiver_id) REFERENCES Users(user_id),
     FOREIGN KEY (car_id) REFERENCES Cars(car_id)
