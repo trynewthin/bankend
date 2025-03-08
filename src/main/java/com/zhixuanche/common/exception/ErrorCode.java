@@ -46,7 +46,21 @@ public enum ErrorCode {
     GET_PREFERENCE_RECOMMENDATIONS_ERROR(4003, "获取偏好推荐失败"),
     GET_HOT_RECOMMENDATIONS_ERROR(4004, "获取热门推荐失败"),
     GET_NEW_RECOMMENDATIONS_ERROR(4005, "获取新车推荐失败"),
-    INVALID_RECOMMENDATION_PARAMS(4006, "无效的推荐参数");
+    INVALID_RECOMMENDATION_PARAMS(4006, "无效的推荐参数"),
+    
+    // 消息模块错误码 (5xxx)
+    MESSAGE_ERROR(5100, "消息系统异常"),
+    MESSAGE_NOT_FOUND(5101, "消息不存在"),
+    MESSAGE_PERMISSION_DENIED(5102, "无权限操作该消息"),
+    MESSAGE_SEND_FAILED(5103, "消息发送失败"),
+    
+    // 预约相关错误码 (51xx)
+    APPOINTMENT_ERROR(5110, "预约系统异常"),
+    APPOINTMENT_NOT_FOUND(5111, "预约不存在"),
+    APPOINTMENT_STATUS_ERROR(5112, "预约状态不允许修改"),
+    APPOINTMENT_TIME_INVALID(5113, "预约时间无效"),
+    APPOINTMENT_CONFLICT(5114, "预约时间冲突"),
+    APPOINTMENT_PERMISSION_DENIED(5115, "无权限操作该预约");
     
     private final int code;
     private final String message;
