@@ -4,7 +4,6 @@ import com.zhixuanche.common.exception.BusinessException;
 import com.zhixuanche.common.exception.ErrorCode;
 import com.zhixuanche.message.constant.MessageConstant;
 import com.zhixuanche.message.entity.Appointment;
-import com.zhixuanche.message.entity.Message;
 import com.zhixuanche.message.service.MessageService;
 import com.zhixuanche.message.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
