@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * 用户行为服务实现类
@@ -107,7 +109,19 @@ public class BehaviorServiceImpl implements BehaviorService {
                     }
                 }
                 
-                dto.setBrowseTime((Date) record.get("behavior_time"));
+                // 修复日期类型转换问题
+                Object browseTimeObj = record.get("behavior_time");
+                if (browseTimeObj instanceof LocalDateTime) {
+                    // 将LocalDateTime转换为Date
+                    LocalDateTime ldt = (LocalDateTime) browseTimeObj;
+                    Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+                    dto.setBrowseTime(date);
+                } else if (browseTimeObj instanceof Date) {
+                    dto.setBrowseTime((Date) browseTimeObj);
+                } else if (browseTimeObj != null) {
+                    log.warn("浏览时间字段类型未知: {}", browseTimeObj.getClass().getName());
+                }
+                
                 dto.setDuration((Integer) record.get("duration"));
                 dto.setThumbnailUrl((String) record.get("thumbnail_url"));
                 dtoList.add(dto);
@@ -134,7 +148,20 @@ public class BehaviorServiceImpl implements BehaviorService {
             SearchHistoryDTO dto = new SearchHistoryDTO();
             dto.setBehaviorId(record.getBehaviorId());
             dto.setSearchKeywords(record.getSearchKeywords());
-            dto.setSearchTime(record.getBehaviorTime());
+            
+            // 处理日期转换问题
+            Object searchTimeObj = record.getBehaviorTime();
+            if (searchTimeObj instanceof LocalDateTime) {
+                // 将LocalDateTime转换为Date
+                LocalDateTime ldt = (LocalDateTime) searchTimeObj;
+                Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+                dto.setSearchTime(date);
+            } else if (searchTimeObj instanceof Date) {
+                dto.setSearchTime((Date) searchTimeObj);
+            } else if (searchTimeObj != null) {
+                log.warn("搜索时间字段类型未知: {}", searchTimeObj.getClass().getName());
+            }
+            
             dtoList.add(dto);
         }
         

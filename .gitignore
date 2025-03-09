@@ -1,9 +1,12 @@
+# 忽略IDE配置
 .idea
 .vscode
 
+# 忽略编译输出
 target
 
+# 忽略数据库数据    
 database/mysql/data
 
-
+# 忽略图片数据
 database/public
