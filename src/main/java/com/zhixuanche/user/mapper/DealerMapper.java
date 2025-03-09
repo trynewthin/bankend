@@ -59,4 +59,28 @@ public interface DealerMapper {
      */
     @Select("SELECT * FROM Dealers WHERE status = 1")
     List<Dealer> findApprovedDealers();
+    
+    /**
+     * 根据用户ID删除经销商
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    @Delete("DELETE FROM Dealers WHERE user_id = #{userId}")
+    int deleteByUserId(Integer userId);
+    
+    /**
+     * 检查经销商是否有关联的车辆
+     * @param dealerId 经销商ID
+     * @return 关联车辆数量
+     */
+    @Select("SELECT COUNT(*) FROM Cars WHERE dealer_id = #{dealerId}")
+    int countCarsByDealerId(Integer dealerId);
+    
+    /**
+     * 根据ID删除经销商
+     * @param dealerId 经销商ID
+     * @return 影响行数
+     */
+    @Delete("DELETE FROM Dealers WHERE dealer_id = #{dealerId}")
+    int deleteById(Integer dealerId);
 } 
