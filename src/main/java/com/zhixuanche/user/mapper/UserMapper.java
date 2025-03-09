@@ -4,6 +4,8 @@ import com.zhixuanche.user.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户Mapper接口
@@ -67,4 +69,43 @@ public interface UserMapper {
      */
     @Select("SELECT COUNT(*) FROM Users WHERE phone = #{phone}")
     int checkPhoneExists(String phone);
+    
+    /**
+     * 根据条件分页查询用户列表
+     * @param conditions 查询条件
+     * @return 用户列表
+     */
+    List<User> findByConditions(Map<String, Object> conditions);
+    
+    /**
+     * 根据条件统计用户数量
+     * @param conditions 查询条件
+     * @return 用户数量
+     */
+    int countByConditions(Map<String, Object> conditions);
+    
+    /**
+     * 删除用户
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    @Delete("DELETE FROM Users WHERE user_id = #{userId}")
+    int deleteById(Integer userId);
+    
+    /**
+     * 检查用户是否有关联的预约
+     * @param userId 用户ID
+     * @return 关联预约数量
+     */
+    @Select("SELECT COUNT(*) FROM Appointments WHERE user_id = #{userId}")
+    int countAppointmentsByUserId(Integer userId);
+    
+    /**
+     * 仅更新用户状态
+     * @param userId 用户ID
+     * @param status 状态值
+     * @return 影响行数
+     */
+    @Update("UPDATE Users SET status = #{status} WHERE user_id = #{userId}")
+    int updateStatus(@Param("userId") Integer userId, @Param("status") Integer status);
 } 
