@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -80,7 +82,19 @@ public class FavoriteServiceImpl implements FavoriteService {
                     dto.setPrice(Double.valueOf(priceObj.toString()));
                 }
                 
-                dto.setCreateTime((Date) record.get("create_time"));
+                // 修复日期类型转换问题
+                Object createTimeObj = record.get("create_time");
+                if (createTimeObj instanceof LocalDateTime) {
+                    // 将LocalDateTime转换为Date
+                    LocalDateTime ldt = (LocalDateTime) createTimeObj;
+                    Date date = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+                    dto.setCreateTime(date);
+                } else if (createTimeObj instanceof Date) {
+                    dto.setCreateTime((Date) createTimeObj);
+                } else if (createTimeObj != null) {
+                    log.warn("收藏时间字段类型未知: {}", createTimeObj.getClass().getName());
+                }
+                
                 dto.setThumbnailUrl((String) record.get("thumbnail_url"));
                 dtoList.add(dto);
             } catch (Exception e) {
