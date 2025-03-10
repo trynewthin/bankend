@@ -18,15 +18,18 @@ public interface RecommendationMapper {
     @Select("""
         SELECT c.*, 
             COUNT(DISTINCT ub.user_id) as view_count,
-            COUNT(DISTINCT f.user_id) as favorite_count
+            COUNT(DISTINCT f.user_id) as favorite_count,
+            ci.image_url as main_image
         FROM Cars c
         LEFT JOIN UserBehaviors ub ON c.car_id = ub.car_id 
             AND ub.behavior_type = '浏览'
             AND ub.behavior_time >= #{startTime}
         LEFT JOIN Favorites f ON c.car_id = f.car_id
             AND f.create_time >= #{startTime}
+        LEFT JOIN CarImages ci ON c.car_id = ci.car_id 
+            AND ci.image_type = '缩略图'
         WHERE c.status = 1
-        GROUP BY c.car_id
+        GROUP BY c.car_id, ci.image_url
         ORDER BY (COUNT(DISTINCT ub.user_id) * 0.6 + COUNT(DISTINCT f.user_id) * 0.4) DESC
         LIMIT #{limit}
     """)
@@ -39,14 +42,17 @@ public interface RecommendationMapper {
     @Select("""
         SELECT c.*, 
             COUNT(DISTINCT ub.user_id) as view_count,
-            COUNT(DISTINCT f.user_id) as favorite_count
+            COUNT(DISTINCT f.user_id) as favorite_count,
+            ci.image_url as main_image
         FROM Cars c
         LEFT JOIN UserBehaviors ub ON c.car_id = ub.car_id 
             AND ub.behavior_type = '浏览'
         LEFT JOIN Favorites f ON c.car_id = f.car_id
+        LEFT JOIN CarImages ci ON c.car_id = ci.car_id 
+            AND ci.image_type = '缩略图'
         WHERE c.status = 1
         AND c.create_time >= #{startTime}
-        GROUP BY c.car_id
+        GROUP BY c.car_id, ci.image_url
         ORDER BY c.create_time DESC
         LIMIT #{limit}
     """)
@@ -59,11 +65,14 @@ public interface RecommendationMapper {
     @Select("""
         SELECT c.*, 
             COUNT(DISTINCT ub.user_id) as view_count,
-            COUNT(DISTINCT f.user_id) as favorite_count
+            COUNT(DISTINCT f.user_id) as favorite_count,
+            ci.image_url as main_image
         FROM Cars c
         LEFT JOIN UserBehaviors ub ON c.car_id = ub.car_id 
             AND ub.behavior_type = '浏览'
         LEFT JOIN Favorites f ON c.car_id = f.car_id
+        LEFT JOIN CarImages ci ON c.car_id = ci.car_id 
+            AND ci.image_type = '缩略图'
         WHERE c.status = 1
         AND (
             c.brand IN (
@@ -86,7 +95,7 @@ public interface RecommendationMapper {
             FROM UserBehaviors 
             WHERE user_id = #{userId}
         )
-        GROUP BY c.car_id
+        GROUP BY c.car_id, ci.image_url
         ORDER BY c.create_time DESC
         LIMIT #{limit}
     """)
@@ -99,11 +108,14 @@ public interface RecommendationMapper {
     @Select("""
         SELECT c.*, 
             COUNT(DISTINCT ub.user_id) as view_count,
-            COUNT(DISTINCT f.user_id) as favorite_count
+            COUNT(DISTINCT f.user_id) as favorite_count,
+            ci.image_url as main_image
         FROM Cars c
         LEFT JOIN UserBehaviors ub ON c.car_id = ub.car_id 
             AND ub.behavior_type = '浏览'
         LEFT JOIN Favorites f ON c.car_id = f.car_id
+        LEFT JOIN CarImages ci ON c.car_id = ci.car_id 
+            AND ci.image_type = '缩略图'
         INNER JOIN UserPreferences up ON up.user_id = #{userId}
         WHERE c.status = 1
         AND c.price BETWEEN up.price_min AND up.price_max
@@ -111,7 +123,7 @@ public interface RecommendationMapper {
             FIND_IN_SET(c.brand, up.preferred_brands)
             OR FIND_IN_SET(c.category, up.preferred_categories)
         )
-        GROUP BY c.car_id
+        GROUP BY c.car_id, ci.image_url
         ORDER BY c.create_time DESC
         LIMIT #{limit}
     """)
