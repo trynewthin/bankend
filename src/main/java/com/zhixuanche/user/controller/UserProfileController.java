@@ -1,6 +1,7 @@
 package com.zhixuanche.user.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.zhixuanche.user.dto.PasswordUpdateDTO;
 import com.zhixuanche.user.dto.UserProfileDTO;
 import com.zhixuanche.user.entity.User;
 import com.zhixuanche.user.service.UserService;
@@ -56,6 +57,68 @@ public class UserProfileController {
         user.setPhone(profileDTO.getPhone());
         userService.updateUser(user);
         return ApiResponse.success("更新成功", user);
+    }
+    
+    /**
+     * 修改密码
+     */
+    @Operation(
+        summary = "修改密码", 
+        description = "修改当前登录用户的密码",
+        responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "修改成功",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = ApiResponse.class,
+                        example = """
+                        {
+                            "code": 200,
+                            "message": "密码修改成功",
+                            "data": null
+                        }
+                        """
+                    )
+                )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "请求错误",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = ApiResponse.class,
+                        example = """
+                        {
+                            "code": 400,
+                            "message": "原密码错误"
+                        }
+                        """
+                    )
+                )
+            )
+        }
+    )
+    @PutMapping("/password")
+    public ApiResponse<Object> updatePassword(@Valid @RequestBody PasswordUpdateDTO passwordDTO) {
+        try {
+            Integer userId = StpUtil.getLoginIdAsInt();
+            boolean success = userService.updatePassword(
+                userId,
+                passwordDTO.getOldPassword(),
+                passwordDTO.getNewPassword()
+            );
+            
+            if (success) {
+                return ApiResponse.success("密码修改成功", null);
+            } else {
+                return ApiResponse.error(500, "密码修改失败");
+            }
+        } catch (RuntimeException e) {
+            return ApiResponse.error(400, e.getMessage());
+        }
     }
 
     /**
