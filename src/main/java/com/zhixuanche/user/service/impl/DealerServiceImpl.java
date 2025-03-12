@@ -22,10 +22,23 @@ public class DealerServiceImpl implements DealerService {
     @Override
     @Transactional
     public Dealer submitDealerInfo(Dealer dealer) {
-        // 设置初始状态为待审核
-        dealer.setStatus(DealerStatus.PENDING);
-        dealerMapper.insert(dealer);
-        return dealer;
+        // 检查该用户是否已经提交过经销商信息
+        Dealer existingDealer = dealerMapper.findByUserId(dealer.getUserId());
+        
+        if (existingDealer != null) {
+            // 已存在记录，执行更新操作
+            dealer.setDealerId(existingDealer.getDealerId());
+            // 保留原有状态
+            dealer.setStatus(existingDealer.getStatus());
+            dealerMapper.update(dealer);
+            return dealer;
+        } else {
+            // 不存在记录，执行插入操作
+            // 设置初始状态为待审核
+            dealer.setStatus(DealerStatus.PENDING);
+            dealerMapper.insert(dealer);
+            return dealer;
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.zhixuanche.user.service;
 
 import com.zhixuanche.user.entity.Dealer;
+import com.zhixuanche.user.entity.enums.DealerStatus;
 import java.util.List;
 
 /**
