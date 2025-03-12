@@ -69,7 +69,9 @@ public class SecurityConfig implements WebMvcConfigurer {
             SaRouter.match("/dealers/**")
                     .notMatch("/dealers/admin/**")
                     .check(r -> StpUtil.checkRole("dealer"));
-        })).addPathPatterns("/**").order(1); // 认证拦截器优先级最高
+        })).addPathPatterns("/**")
+                .excludePathPatterns("/**", "OPTIONS") // 添加此行排除OPTIONS请求
+                .order(1); // 认证拦截器优先级最高
 
         // 2. 注册用户ID拦截器
         registry.addInterceptor(new UserIdInterceptor())

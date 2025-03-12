@@ -235,6 +235,48 @@
 }
 ```
 
+### 2.4 修改密码
+- **接口**: `PUT /api/users/password`
+- **描述**: 修改当前登录用户的密码
+- **请求头**: `Authorization: token值`
+- **请求体**:
+```json
+{
+    "oldPassword": "string",  // 原密码
+    "newPassword": "string"   // 新密码，6-20个字符
+}
+```
+- **响应**:
+```json
+{
+    "code": 200,
+    "message": "密码修改成功",
+    "data": null
+}
+```
+- **可能的错误响应**:
+```json
+{
+    "code": 400,
+    "message": "原密码错误",
+    "data": null
+}
+```
+```json
+{
+    "code": 400,
+    "message": "新密码长度必须在6-20个字符之间",
+    "data": null
+}
+```
+```json
+{
+    "code": 500,
+    "message": "密码修改失败",
+    "data": null
+}
+```
+
 ## 3. 用户偏好设置 API
 
 ### 3.1 获取用户偏好设置
