@@ -103,6 +103,12 @@ public class UserAdminServiceImpl implements UserAdminService {
             if (dealer != null) {
                 UserAdminDetailDTO.DealerInfoDTO dealerInfoDTO = new UserAdminDetailDTO.DealerInfoDTO();
                 BeanUtils.copyProperties(dealer, dealerInfoDTO);
+                
+                // 手动处理status字段，将DealerStatus枚举转换为Integer
+                if (dealer.getStatus() != null) {
+                    dealerInfoDTO.setStatus(dealer.getStatus().getCode());
+                }
+                
                 detailDTO.setDealerInfo(dealerInfoDTO);
             }
         }
