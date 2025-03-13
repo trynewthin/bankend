@@ -140,9 +140,6 @@ public class ContentAuditServiceImpl implements ContentAuditService {
         if (result > 0) {
             // 发送通知给经销商
             sendAuditNotificationToDealer(dealerUserId, car, auditDTO);
-            
-            // 记录审核日志
-            logCarAuditOperation(carId, adminId, auditDTO);
         }
         
         return result > 0;
@@ -174,20 +171,6 @@ public class ContentAuditServiceImpl implements ContentAuditService {
         }
         
         notificationService.sendSystemNotification(dealerUserId, title, content, noticeType);
-    }
-    
-    /**
-     * 记录车辆审核操作日志
-     */
-    private void logCarAuditOperation(Integer carId, Integer adminId, ContentAuditDTO auditDTO) {
-        String content = String.format("审核车辆信息：%s", 
-                auditDTO.getStatus() == 1 ? "通过" : "拒绝");
-        
-        if (StringUtils.isNotBlank(auditDTO.getRemarks())) {
-            content += String.format("，备注：%s", auditDTO.getRemarks());
-        }
-        
-        auditLogService.logCarAudit(carId, adminId, auditDTO.getStatus(), content);
     }
 
     @Override

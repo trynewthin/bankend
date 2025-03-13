@@ -4,6 +4,7 @@ import com.zhixuanche.user.entity.Dealer;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 经销商Mapper接口
@@ -59,6 +60,38 @@ public interface DealerMapper {
      */
     @Select("SELECT * FROM Dealers WHERE status = 1")
     List<Dealer> findApprovedDealers();
+    
+    /**
+     * 获取已拒绝经销商列表
+     */
+    @Select("SELECT * FROM Dealers WHERE status = 2")
+    List<Dealer> findRejectedDealers();
+    
+    /**
+     * 获取所有经销商列表
+     */
+    @Select("SELECT * FROM Dealers")
+    List<Dealer> findAllDealers();
+    
+    /**
+     * 统计经销商总数
+     */
+    @Select("SELECT COUNT(*) FROM Dealers")
+    int countAllDealers();
+    
+    /**
+     * 根据条件查询经销商
+     * @param params 查询参数
+     * @return 经销商列表
+     */
+    List<Dealer> findDealersByParams(Map<String, Object> params);
+    
+    /**
+     * 根据条件统计经销商数量
+     * @param params 查询参数
+     * @return 经销商数量
+     */
+    int countDealersByParams(Map<String, Object> params);
     
     /**
      * 根据用户ID删除经销商

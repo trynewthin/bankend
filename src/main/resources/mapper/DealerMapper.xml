@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhixuanche.user.mapper.DealerMapper">
+
+    <!-- 根据条件查询经销商列表 -->
+    <select id="findDealersByParams" parameterType="map" resultType="com.zhixuanche.user.entity.Dealer">
+        SELECT * FROM Dealers
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (dealer_name LIKE CONCAT('%', #{keyword}, '%') 
+                     OR address LIKE CONCAT('%', #{keyword}, '%')
+                     OR contact_person LIKE CONCAT('%', #{keyword}, '%')
+                     OR contact_phone LIKE CONCAT('%', #{keyword}, '%')
+                    )
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="region != null and region != ''">
+                AND address LIKE CONCAT('%', #{region}, '%')
+            </if>
+        </where>
+        ORDER BY dealer_id DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+    
+    <!-- 根据条件统计经销商数量 -->
+    <select id="countDealersByParams" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM Dealers
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (dealer_name LIKE CONCAT('%', #{keyword}, '%') 
+                     OR address LIKE CONCAT('%', #{keyword}, '%')
+                     OR contact_person LIKE CONCAT('%', #{keyword}, '%')
+                     OR contact_phone LIKE CONCAT('%', #{keyword}, '%')
+                    )
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="region != null and region != ''">
+                AND address LIKE CONCAT('%', #{region}, '%')
+            </if>
+        </where>
+    </select>
+    
+</mapper> 

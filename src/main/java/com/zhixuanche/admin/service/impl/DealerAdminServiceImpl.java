@@ -68,22 +68,9 @@ public class DealerAdminServiceImpl implements DealerAdminService {
         params.put("offset", (page - 1) * size);
         params.put("limit", size);
         
-        // 这里应该有根据参数查询总记录数和经销商列表的方法
-        // 由于没有现成的方法，这里简化处理
-        List<Dealer> dealers = new ArrayList<>();
-        int total = 0;
-        
-        // 根据认证状态获取经销商
-        if ("PENDING".equalsIgnoreCase(verifyStatus)) {
-            dealers = dealerMapper.findPendingDealers();
-            total = dealers.size();
-        } else if ("APPROVED".equalsIgnoreCase(verifyStatus)) {
-            dealers = dealerMapper.findApprovedDealers();
-            total = dealers.size();
-        } else {
-            // 获取所有经销商，这里需要实现一个方法或提供一个SQL查询
-            // 代码简化，实际项目中应有更完善的实现
-        }
+        // 查询总记录数和经销商列表
+        List<Dealer> dealers = dealerMapper.findDealersByParams(params);
+        int total = dealerMapper.countDealersByParams(params);
         
         // 计算总页数
         int pages = (total + size - 1) / size;
@@ -118,10 +105,8 @@ public class DealerAdminServiceImpl implements DealerAdminService {
         if (auditDTO.getStatus() == 1) {
             User user = userMapper.findById(dealer.getUserId());
             if (user != null) {
-                User updateUser = new User();
-                updateUser.setUserId(user.getUserId());
-                updateUser.setStatus(1); // 设置为正常状态
-                userMapper.update(updateUser);
+                // 使用专用的updateStatus方法代替更新整个User对象
+                userMapper.updateStatus(user.getUserId(), 1); // 设置为正常状态
             }
         }
         
@@ -129,8 +114,8 @@ public class DealerAdminServiceImpl implements DealerAdminService {
             // 发送通知给经销商
             sendAuditNotificationToDealer(dealer.getUserId(), dealer, auditDTO);
             
-            // 记录审核日志
-            logDealerAuditOperation(dealerId, adminId, auditDTO);
+            // 不再记录审核日志
+            // 移除: logDealerAuditOperation(dealerId, adminId, auditDTO);
         }
         
         return result > 0;
@@ -162,20 +147,6 @@ public class DealerAdminServiceImpl implements DealerAdminService {
         }
         
         notificationService.sendSystemNotification(userId, title, content, noticeType);
-    }
-    
-    /**
-     * 记录经销商审核操作日志
-     */
-    private void logDealerAuditOperation(Integer dealerId, Integer adminId, DealerAuditDTO auditDTO) {
-        String content = String.format("审核经销商资质：%s", 
-                auditDTO.getStatus() == 1 ? "通过" : "拒绝");
-        
-        if (StringUtils.isNotBlank(auditDTO.getRemarks())) {
-            content += String.format("，备注：%s", auditDTO.getRemarks());
-        }
-        
-        auditLogService.logDealerAudit(dealerId, adminId, auditDTO.getStatus(), content);
     }
     
     @Override
