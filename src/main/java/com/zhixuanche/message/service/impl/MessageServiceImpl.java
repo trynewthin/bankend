@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import cn.dev33.satoken.stp.StpUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

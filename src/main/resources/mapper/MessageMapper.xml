@@ -23,11 +23,11 @@
         ORDER BY priority DESC, send_time DESC
     </select>
     
-    <!-- 获取互动消息 -->
+    <!-- 获取用户的互动消息 -->
     <select id="getInteractionMessages" resultType="com.zhixuanche.message.entity.Message">
         SELECT *
         FROM Messages
-        WHERE receiver_id = #{userId}
+        WHERE (receiver_id = #{userId} OR sender_id = #{userId})
         AND sender_id NOT IN (1, 2, 3, 4) <!-- 非系统用户 -->
         <if test="interactionType != null and interactionType != ''">
             AND interaction_type = #{interactionType}

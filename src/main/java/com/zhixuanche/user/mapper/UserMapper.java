@@ -108,4 +108,75 @@ public interface UserMapper {
      */
     @Update("UPDATE Users SET status = #{status} WHERE user_id = #{userId}")
     int updateStatus(@Param("userId") Integer userId, @Param("status") Integer status);
+    
+    /**
+     * 统计用户总数
+     */
+    @Select("SELECT COUNT(*) FROM Users WHERE status = 1")
+    int countTotalUsers();
+    
+    /**
+     * 统计各类型用户数量
+     */
+    @Select("SELECT user_type, COUNT(*) as count FROM Users WHERE status = 1 GROUP BY user_type")
+    Map<String, Integer> countUsersByType();
+    
+    /**
+     * 统计新增用户数量
+     */
+    @Select("""
+        SELECT COUNT(*) 
+        FROM Users 
+        WHERE status = 1 
+        AND DATE(register_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+    """)
+    int countNewUsers(@Param("startDate") String startDate, @Param("endDate") String endDate);
+    
+    /**
+     * 统计指定日期之前的用户数量
+     */
+    @Select("""
+        SELECT COUNT(*) 
+        FROM Users 
+        WHERE status = 1 
+        AND DATE(register_time) < STR_TO_DATE(#{date}, '%Y-%m-%d')
+    """)
+    int countUsersBeforeDate(@Param("date") String date);
+    
+    /**
+     * 获取用户趋势数据
+     */
+    @Select("""
+        SELECT 
+            DATE(register_time) as date,
+            COUNT(*) as new_users,
+            COUNT(DISTINCT CASE WHEN last_login_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') THEN user_id END) as active_users
+        FROM Users
+        WHERE status = 1
+        AND DATE(register_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        GROUP BY DATE(register_time)
+        ORDER BY date
+    """)
+    List<Map<String, Object>> getUserTrendData(@Param("startDate") String startDate, 
+                                              @Param("endDate") String endDate, 
+                                              @Param("groupBy") String groupBy);
+    
+    /**
+     * 获取用户活跃度统计
+     */
+    @Select("""
+        SELECT 
+            COUNT(*) as total_users,
+            COUNT(DISTINCT CASE WHEN last_login_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') THEN user_id END) as active_users,
+            COUNT(DISTINCT CASE WHEN last_login_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') AND user_type = 'NORMAL_USER' THEN user_id END) as active_customers,
+            COUNT(DISTINCT CASE WHEN last_login_time >= STR_TO_DATE(#{startDate}, '%Y-%m-%d') AND user_type = 'DEALER' THEN user_id END) as active_dealers
+        FROM Users
+        WHERE status = 1
+        AND DATE(register_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+    """)
+    Map<String, Object> getUserActivityStatistics(@Param("startDate") String startDate, 
+                                                @Param("endDate") String endDate);
 } 

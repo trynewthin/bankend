@@ -171,4 +171,60 @@ public interface CarMapper {
      */
     @Select("SELECT COUNT(*) FROM Appointments WHERE car_id = #{carId}")
     int countAppointmentsByCarId(Integer carId);
+    
+    /**
+     * 统计车辆总数
+     */
+    @Select("SELECT COUNT(*) FROM Cars")
+    int countTotalCars();
+    
+    /**
+     * 统计各状态车辆数量
+     */
+    @Select("SELECT status, COUNT(*) as count FROM Cars GROUP BY status")
+    Map<String, Integer> countCarsByStatus();
+    
+    /**
+     * 统计各品牌车辆数量
+     */
+    @Select("SELECT brand, COUNT(*) as count FROM Cars GROUP BY brand")
+    Map<String, Integer> countCarsByBrand();
+    
+    /**
+     * 统计新增车辆数量
+     */
+    @Select("SELECT COUNT(*) FROM Cars WHERE create_time BETWEEN #{startDate} AND #{endDate}")
+    int countNewCars(@Param("startDate") String startDate, @Param("endDate") String endDate);
+    
+    /**
+     * 获取车辆趋势数据
+     */
+    @Select("""
+        SELECT 
+            DATE(create_time) as date,
+            COUNT(*) as new_cars,
+            COUNT(DISTINCT CASE WHEN status = 'AVAILABLE' THEN car_id END) as available_cars
+        FROM Cars
+        WHERE create_time BETWEEN #{startDate} AND #{endDate}
+        GROUP BY DATE(create_time)
+        ORDER BY date
+    """)
+    List<Map<String, Object>> getCarTrendData(@Param("startDate") String startDate, 
+                                            @Param("endDate") String endDate, 
+                                            @Param("groupBy") String groupBy);
+    
+    /**
+     * 获取车辆库存统计
+     */
+    @Select("""
+        SELECT 
+            COUNT(*) as total_cars,
+            COUNT(DISTINCT CASE WHEN status = 'AVAILABLE' THEN car_id END) as available_cars,
+            COUNT(DISTINCT CASE WHEN status = 'SOLD' THEN car_id END) as sold_cars,
+            COUNT(DISTINCT CASE WHEN status = 'RESERVED' THEN car_id END) as reserved_cars
+        FROM Cars
+        WHERE create_time BETWEEN #{startDate} AND #{endDate}
+    """)
+    Map<String, Object> getCarInventoryStatistics(@Param("startDate") String startDate, 
+                                                @Param("endDate") String endDate);
 } 

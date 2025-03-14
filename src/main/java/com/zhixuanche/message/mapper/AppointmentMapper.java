@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预约数据访问层
@@ -69,4 +70,32 @@ public interface AppointmentMapper extends BaseMapper<Appointment> {
      * @return 分页预约列表
      */
     IPage<Appointment> getUpcomingAppointments(Page<Appointment> page, @Param("userId") Integer userId);
+    
+    /**
+     * 统计预约总数
+     */
+    int countTotalAppointments();
+    
+    /**
+     * 统计各状态预约数量
+     */
+    Map<String, Integer> countAppointmentsByStatus();
+    
+    /**
+     * 统计新增预约数量
+     */
+    int countNewAppointments(@Param("startDate") String startDate, @Param("endDate") String endDate);
+    
+    /**
+     * 获取预约趋势数据
+     */
+    List<Map<String, Object>> getAppointmentTrendData(@Param("startDate") String startDate, 
+                                                    @Param("endDate") String endDate, 
+                                                    @Param("groupBy") String groupBy);
+    
+    /**
+     * 获取预约完成率统计
+     */
+    Map<String, Object> getAppointmentCompletionStatistics(@Param("startDate") String startDate, 
+                                                         @Param("endDate") String endDate);
 } 

@@ -33,7 +33,7 @@
         SELECT COUNT(*)
         FROM Appointments
         WHERE dealer_id = #{dealerId}
-        AND status = '待确认'
+        AND status = 'PENDING'
     </select>
     
     <!-- 获取用户指定车辆的预约 -->
@@ -53,8 +53,52 @@
         JOIN Dealers d ON a.dealer_id = d.dealer_id
         WHERE a.user_id = #{userId}
         AND a.appointment_time > NOW()
-        AND a.status IN ('待确认', '已确认')
+        AND a.status IN ('PENDING', 'CONFIRMED')
         ORDER BY a.appointment_time ASC
     </select>
     
+    <!-- 统计预约总数 -->
+    <select id="countTotalAppointments" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM Appointments
+    </select>
+    
+    <!-- 统计各状态预约数量 -->
+    <select id="countAppointmentsByStatus" resultType="java.util.Map">
+        SELECT status, COUNT(*) as count 
+        FROM Appointments 
+        GROUP BY status
+    </select>
+    
+    <!-- 统计新增预约数量 -->
+    <select id="countNewAppointments" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM Appointments 
+        WHERE DATE(create_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+    </select>
+    
+    <!-- 获取预约趋势数据 -->
+    <select id="getAppointmentTrendData" resultType="java.util.Map">
+        SELECT 
+            DATE(create_time) as date,
+            COUNT(*) as new_appointments,
+            COUNT(DISTINCT CASE WHEN status = 'COMPLETED' THEN appointment_id END) as completed_appointments
+        FROM Appointments
+        WHERE DATE(create_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        GROUP BY DATE(create_time)
+        ORDER BY date
+    </select>
+    
+    <!-- 获取预约完成率统计 -->
+    <select id="getAppointmentCompletionStatistics" resultType="java.util.Map">
+        SELECT 
+            COUNT(*) as total_appointments,
+            COUNT(DISTINCT CASE WHEN status = 'COMPLETED' THEN appointment_id END) as completed_appointments,
+            COUNT(DISTINCT CASE WHEN status = 'CANCELLED' THEN appointment_id END) as cancelled_appointments,
+            COUNT(DISTINCT CASE WHEN status = 'PENDING' THEN appointment_id END) as pending_appointments
+        FROM Appointments
+        WHERE DATE(create_time) BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') 
+        AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+    </select>
 </mapper> 
