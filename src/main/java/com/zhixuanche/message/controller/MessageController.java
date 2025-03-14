@@ -25,7 +25,7 @@ import java.util.Map;
  * 消息控制器
  */
 @Tag(name = "消息管理", description = "消息相关接口，包括系统消息、交互消息、聊天记录等")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "Sa-Token")
 @RestController
 @RequestMapping("/message")
 public class MessageController {
