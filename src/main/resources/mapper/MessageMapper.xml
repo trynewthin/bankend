@@ -59,7 +59,7 @@
         <if test="carId != null">
             AND car_id = #{carId}
         </if>
-        ORDER BY send_time ASC
+        ORDER BY send_time DESC
     </select>
     
     <!-- 批量标记消息为已读 -->
@@ -101,6 +101,23 @@
         FROM Messages
         WHERE receiver_id = #{userId}
         AND read_status = 0
+    </select>
+    
+    <!-- 获取与指定用户有消息往来的其他用户ID列表 -->
+    <select id="getChatContactIds" resultType="java.lang.Integer">
+        SELECT DISTINCT contact_id
+        FROM (
+            SELECT sender_id as contact_id
+            FROM Messages
+            WHERE receiver_id = #{userId}
+            
+            UNION
+            
+            SELECT receiver_id as contact_id
+            FROM Messages
+            WHERE sender_id = #{userId}
+        ) as contacts
+        ORDER BY contact_id
     </select>
     
 </mapper> 

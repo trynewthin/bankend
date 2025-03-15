@@ -321,4 +321,26 @@ public class MessageController {
         
         return Result.success("获取未读消息统计成功", stats);
     }
+
+    /**
+     * 获取聊天联系人列表
+     */
+    @Operation(
+        summary = "获取聊天联系人",
+        description = "获取与当前登录用户有消息往来的其他用户ID列表",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "获取成功"),
+            @ApiResponse(responseCode = "401", description = "未授权")
+        }
+    )
+    @GetMapping("/contacts")
+    public Result getChatContacts() {
+        // 获取当前登录用户ID
+        Integer userId = StpUtil.getLoginIdAsInt();
+        
+        // 获取聊天联系人列表
+        List<Integer> contactIds = messageService.getChatContactIds(userId);
+        
+        return Result.success("获取聊天联系人成功", contactIds);
+    }
 } 

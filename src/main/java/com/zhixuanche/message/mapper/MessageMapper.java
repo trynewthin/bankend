@@ -96,4 +96,11 @@ public interface MessageMapper extends BaseMapper<Message> {
      * @return 未读消息总数
      */
     int getTotalUnreadCount(@Param("userId") Integer userId);
+    
+    /**
+     * 获取与指定用户有消息往来的其他用户ID列表
+     * @param userId 当前用户ID
+     * @return 与当前用户有消息往来的其他用户ID列表
+     */
+    List<Integer> getChatContactIds(@Param("userId") Integer userId);
 } 

@@ -336,6 +336,16 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         return count(queryWrapper) > 0 ? baseMapper.delete(queryWrapper) : 0;
     }
 
+    @Override
+    public List<Integer> getChatContactIds(Integer userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR.getCode(), "用户ID不能为空");
+        }
+        
+        // 调用Mapper方法获取联系人ID列表
+        return messageMapper.getChatContactIds(userId);
+    }
+
     /**
      * 将Message实体列表转换为MessageDTO列表
      * @param messages 消息实体列表
