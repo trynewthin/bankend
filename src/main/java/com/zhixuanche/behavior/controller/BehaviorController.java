@@ -30,7 +30,7 @@ import java.util.Map;
 @Tag(name = "用户行为管理", description = "用于管理用户的浏览、搜索行为记录，以及分析用户兴趣")
 @RestController
 @RequestMapping("/behavior")
-@SecurityRequirement(name = "Authorization")
+@SecurityRequirement(name = "Sa-Token")
 public class BehaviorController {
     
     private static final Logger log = LoggerFactory.getLogger(BehaviorController.class);
@@ -109,7 +109,6 @@ public class BehaviorController {
         summary = "记录浏览行为", 
         description = "记录用户对特定车辆的浏览行为。如果之前已有浏览记录，会更新时间和累加浏览时长。"
     )
-    @Parameter(name = "car_id", description = "车辆ID", required = true, example = "1")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "成功记录浏览行为", 
             content = @Content(mediaType = "application/json", 
@@ -144,11 +143,10 @@ public class BehaviorController {
     })
     @PostMapping("/browse")
     public Result recordBrowse(
-            @RequestBody Map<String, Integer> params) {
+            @RequestParam(name = "car_id", required = true) Integer carId) {
         // 直接使用StpUtil获取用户ID
         Integer userId = StpUtil.getLoginIdAsInt();
         
-        Integer carId = params.get("car_id");
         if (carId == null) {
             return Result.badRequest("参数错误：缺少car_id");
         }
@@ -286,7 +284,6 @@ public class BehaviorController {
         summary = "记录搜索行为", 
         description = "记录用户的搜索关键词，每次搜索都会创建新的记录"
     )
-    @Parameter(name = "keyword", description = "搜索关键词", required = true, example = "宝马 SUV")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "成功记录搜索行为", 
             content = @Content(mediaType = "application/json", 
@@ -311,11 +308,10 @@ public class BehaviorController {
     })
     @PostMapping("/search")
     public Result recordSearch(
-            @RequestBody Map<String, String> params) {
+            @RequestParam(name = "keyword", required = true) String keyword) {
         // 直接使用StpUtil获取用户ID
         Integer userId = StpUtil.getLoginIdAsInt();
         
-        String keyword = params.get("keyword");
         if (keyword == null || keyword.trim().isEmpty()) {
             return Result.badRequest("参数错误：缺少keyword");
         }

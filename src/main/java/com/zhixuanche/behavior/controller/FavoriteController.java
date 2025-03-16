@@ -29,7 +29,7 @@ import java.util.Map;
 @Tag(name = "收藏管理", description = "用于管理用户对车辆的收藏操作，提供添加、删除、查询收藏等功能")
 @RestController
 @RequestMapping("/favorites")
-@SecurityRequirement(name = "Authorization")
+@SecurityRequirement(name = "Sa-Token")
 public class FavoriteController {
     
     private static final Logger log = LoggerFactory.getLogger(FavoriteController.class);
@@ -107,7 +107,6 @@ public class FavoriteController {
         summary = "添加收藏", 
         description = "将指定车辆添加到当前用户的收藏列表中。如果已收藏，则返回409状态码。"
     )
-    @Parameter(name = "car_id", description = "车辆ID", required = true, example = "2")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "成功添加收藏", 
             content = @Content(mediaType = "application/json", 
@@ -146,11 +145,10 @@ public class FavoriteController {
     })
     @PostMapping
     public Result addFavorite(
-            @RequestBody Map<String, Integer> params) {
+            @RequestParam(name = "car_id", required = true) Integer carId) {
         // 直接使用StpUtil获取用户ID
         Integer userId = StpUtil.getLoginIdAsInt();
         
-        Integer carId = params.get("car_id");
         if (carId == null) {
             return Result.badRequest("参数错误：缺少car_id");
         }

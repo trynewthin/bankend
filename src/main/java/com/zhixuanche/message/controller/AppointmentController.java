@@ -31,7 +31,7 @@ import java.util.List;
  * 预约控制器
  */
 @Tag(name = "预约管理", description = "预约相关接口，包括预约创建、查询、取消等操作")
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "Sa-Token")
 @RestController
 @RequestMapping("/appointment")
 public class AppointmentController {
