@@ -119,7 +119,7 @@ public interface UserMapper {
      * 统计各类型用户数量
      */
     @Select("SELECT user_type, COUNT(*) as count FROM Users WHERE status = 1 GROUP BY user_type")
-    Map<String, Integer> countUsersByType();
+    List<Map<String, Object>> countUsersByType();
     
     /**
      * 统计新增用户数量

@@ -57,8 +57,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             result.put("total_users", totalUserCount);
             
             // 获取用户类型分布
-            Map<String, Integer> userTypeStats = userMapper.countUsersByType();
-            log.info("用户类型分布：{}", userTypeStats);
+            List<Map<String, Object>> userTypeStatsList = userMapper.countUsersByType();
+            log.info("用户类型分布：{}", userTypeStatsList);
+            Map<String, Integer> userTypeStats = new HashMap<>();
+            for (Map<String, Object> stat : userTypeStatsList) {
+                String type = (String) stat.get("user_type");
+                Integer count = ((Number) stat.get("count")).intValue();
+                userTypeStats.put(type, count);
+            }
             result.put("customer_count", userTypeStats.getOrDefault(UserType.NORMAL_USER.name(), 0));
             result.put("dealer_count", userTypeStats.getOrDefault(UserType.DEALER.name(), 0));
             result.put("admin_count", userTypeStats.getOrDefault(UserType.ADMIN.name(), 0));
@@ -136,26 +142,39 @@ public class StatisticsServiceImpl implements StatisticsService {
             // 获取车辆总数
             Map<String, Object> params = new HashMap<>();
             int totalCars = carMapper.selectCount(params);
+            log.info("车辆总数：{}", totalCars);
             result.put("total_cars", totalCars);
             
             // 获取车辆状态分布
-            Map<String, Integer> carStatusDistribution = carMapper.countCarsByStatus();
+            List<Map<String, Object>> carStatusList = carMapper.countCarsByStatus();
+            log.info("车辆状态分布列表：{}", carStatusList);
+            Map<String, Integer> carStatusDistribution = new HashMap<>();
+            for (Map<String, Object> stat : carStatusList) {
+                String status = String.valueOf(stat.get("status"));
+                Integer count = ((Number) stat.get("count")).intValue();
+                carStatusDistribution.put(status, count);
+            }
+            log.info("车辆状态分布：{}", carStatusDistribution);
             result.put("car_status_distribution", carStatusDistribution);
             
             // 获取车辆品牌分布
             List<Map<String, Object>> brandDistribution = carMapper.countByBrand();
+            log.info("车辆品牌分布：{}", brandDistribution);
             result.put("car_brand_distribution", brandDistribution);
             
             // 获取新增车辆数
             int newCars = carMapper.countNewCars(startDate, endDate);
+            log.info("新增车辆数：{}", newCars);
             result.put("new_cars", newCars);
             
             // 获取车辆趋势数据
             List<Map<String, Object>> carTrend = getCarTrendData(startDate, endDate, groupBy);
+            log.info("车辆趋势数据：{}", carTrend);
             result.put("car_trend", carTrend);
             
             // 获取车辆类别分布
             List<Map<String, Object>> categoryDistribution = carMapper.countByCategory();
+            log.info("车辆类别分布：{}", categoryDistribution);
             result.put("car_category_distribution", categoryDistribution);
             
             // 获取价格区间分布
@@ -183,6 +202,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             result.put("car_price_distribution", priceRangeDistribution);
             
         } catch (Exception e) {
+            log.error("获取内容统计数据失败", e);
             // 发生异常时返回空数据
             result.put("total_cars", 0);
             result.put("car_status_distribution", Collections.emptyMap());
@@ -203,31 +223,84 @@ public class StatisticsServiceImpl implements StatisticsService {
         try {
             // 获取预约统计
             Map<String, Object> appointmentStats = new HashMap<>();
-            appointmentStats.put("total_appointments", appointmentMapper.countTotalAppointments());
-            appointmentStats.put("status_distribution", appointmentMapper.countAppointmentsByStatus());
-            appointmentStats.put("new_appointments", appointmentMapper.countNewAppointments(startDate, endDate));
-            appointmentStats.put("completion_stats", appointmentMapper.getAppointmentCompletionStatistics(startDate, endDate));
+            int totalAppointments = appointmentMapper.countTotalAppointments();
+            log.info("预约总数: {}", totalAppointments);
+            appointmentStats.put("total_appointments", totalAppointments);
+            
+            List<Map<String, Object>> statusList = appointmentMapper.countAppointmentsByStatus();
+            log.info("预约状态分布列表: {}", statusList);
+            Map<String, Integer> statusDistribution = new HashMap<>();
+            for (Map<String, Object> stat : statusList) {
+                String status = String.valueOf(stat.get("status"));
+                Integer count = ((Number) stat.get("count")).intValue();
+                statusDistribution.put(status, count);
+            }
+            log.info("预约状态分布: {}", statusDistribution);
+            appointmentStats.put("status_distribution", statusDistribution);
+            
+            int newAppointments = appointmentMapper.countNewAppointments(startDate, endDate);
+            log.info("新增预约数: {}", newAppointments);
+            appointmentStats.put("new_appointments", newAppointments);
+            
+            Map<String, Object> completionStats = appointmentMapper.getAppointmentCompletionStatistics(startDate, endDate);
+            log.info("预约完成统计: {}", completionStats);
+            appointmentStats.put("completion_stats", completionStats);
+            
             result.put("appointment_stats", appointmentStats);
             
             // 获取经销商统计
             Map<String, Object> dealerStats = new HashMap<>();
-            dealerStats.put("total_dealers", dealerMapper.countAllDealers());
-            dealerStats.put("active_dealers", dealerMapper.findApprovedDealers().size());
+            int totalDealers = dealerMapper.countAllDealers();
+            log.info("经销商总数: {}", totalDealers);
+            dealerStats.put("total_dealers", totalDealers);
+            
+            List<Dealer> approvedDealers = dealerMapper.findApprovedDealers();
+            log.info("已审核经销商列表: {}", approvedDealers);
+            dealerStats.put("active_dealers", approvedDealers.size());
+            
             result.put("dealer_stats", dealerStats);
             
             // 获取车辆统计
             Map<String, Object> carStats = new HashMap<>();
-            carStats.put("total_cars", carMapper.countTotalCars());
-            carStats.put("status_distribution", carMapper.countCarsByStatus());
-            carStats.put("brand_distribution", carMapper.countCarsByBrand());
-            carStats.put("inventory_stats", carMapper.getCarInventoryStatistics(startDate, endDate));
+            int totalCars = carMapper.countTotalCars();
+            log.info("车辆总数: {}", totalCars);
+            carStats.put("total_cars", totalCars);
+            
+            List<Map<String, Object>> carStatusList = carMapper.countCarsByStatus();
+            log.info("车辆状态分布列表: {}", carStatusList);
+            Map<String, Integer> carStatusDistribution = new HashMap<>();
+            for (Map<String, Object> stat : carStatusList) {
+                String status = String.valueOf(stat.get("status"));
+                Integer count = ((Number) stat.get("count")).intValue();
+                carStatusDistribution.put(status, count);
+            }
+            log.info("车辆状态分布: {}", carStatusDistribution);
+            carStats.put("status_distribution", carStatusDistribution);
+            
+            List<Map<String, Object>> brandList = carMapper.countCarsByBrand();
+            log.info("车辆品牌分布列表: {}", brandList);
+            Map<String, Integer> brandDistribution = new HashMap<>();
+            for (Map<String, Object> stat : brandList) {
+                String brand = String.valueOf(stat.get("brand"));
+                Integer count = ((Number) stat.get("count")).intValue();
+                brandDistribution.put(brand, count);
+            }
+            log.info("车辆品牌分布: {}", brandDistribution);
+            carStats.put("brand_distribution", brandDistribution);
+            
+            Map<String, Object> inventoryStats = carMapper.getCarInventoryStatistics(startDate, endDate);
+            log.info("车辆库存统计: {}", inventoryStats);
+            carStats.put("inventory_stats", inventoryStats);
+            
             result.put("car_stats", carStats);
             
             // 获取用户活跃度统计
             Map<String, Object> userActivityStats = userMapper.getUserActivityStatistics(startDate, endDate);
+            log.info("用户活跃度统计: {}", userActivityStats);
             result.put("user_activity_stats", userActivityStats);
             
         } catch (Exception e) {
+            log.error("获取系统统计数据失败", e);
             // 发生异常时返回空数据
             result.put("appointment_stats", Collections.emptyMap());
             result.put("dealer_stats", Collections.emptyMap());

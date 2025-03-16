@@ -182,13 +182,13 @@ public interface CarMapper {
      * 统计各状态车辆数量
      */
     @Select("SELECT status, COUNT(*) as count FROM Cars GROUP BY status")
-    Map<String, Integer> countCarsByStatus();
+    List<Map<String, Object>> countCarsByStatus();
     
     /**
      * 统计各品牌车辆数量
      */
     @Select("SELECT brand, COUNT(*) as count FROM Cars GROUP BY brand")
-    Map<String, Integer> countCarsByBrand();
+    List<Map<String, Object>> countCarsByBrand();
     
     /**
      * 统计新增车辆数量

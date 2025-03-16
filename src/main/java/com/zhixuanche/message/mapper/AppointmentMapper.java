@@ -79,7 +79,7 @@ public interface AppointmentMapper extends BaseMapper<Appointment> {
     /**
      * 统计各状态预约数量
      */
-    Map<String, Integer> countAppointmentsByStatus();
+    List<Map<String, Object>> countAppointmentsByStatus();
     
     /**
      * 统计新增预约数量
