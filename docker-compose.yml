@@ -19,9 +19,9 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./mysql/data:/var/lib/mysql
-      - ./mysql/init:/docker-entrypoint-initdb.d
-      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./database/mysql/data:/var/lib/mysql
+      - ./database/mysql/init:/docker-entrypoint-initdb.d
+      - ./database/mysql/conf.d:/etc/mysql/conf.d
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
@@ -39,8 +39,21 @@ services:
     ports:
       - "8090:80"
     volumes:
-      - ./public:/usr/share/nginx/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./database/public:/usr/share/nginx/html
+      - ./database/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - mysql
+    networks:
+      - zhixuanche_net
+      
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zhixuanche_app
+    restart: always
+    ports:
+      - "8080:8080"
     depends_on:
       - mysql
     networks:

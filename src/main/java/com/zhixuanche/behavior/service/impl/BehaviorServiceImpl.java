@@ -63,6 +63,7 @@ public class BehaviorServiceImpl implements BehaviorService {
         behavior.setBehaviorType(BehaviorType.SEARCH);
         behavior.setBehaviorTime(new Date());
         behavior.setSearchKeywords(keywords);
+        behavior.setCarId(1);
         behaviorMapper.insert(behavior);
         log.info("新增搜索记录: behaviorId={}", behavior.getBehaviorId());
     }

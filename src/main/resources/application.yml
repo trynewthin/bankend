@@ -8,7 +8,7 @@ spring:
     name: car-recommendation
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/zhixuanche?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://mysql:3306/zhixuanche?useSSL=false&serverTimezone=UTC
     username: zhixuanche_user
     password: zhixuanche_pass
   jpa:

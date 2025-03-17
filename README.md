@@ -59,4 +59,51 @@ src/main/java/com/zhixuanche/
 3. 行为记录模块
 4. 推荐引擎模块
 5. 消息交互模块
-6. 系统管理模块 
+6. 系统管理模块
+
+## Docker部署说明
+
+本项目支持使用Docker进行容器化部署，包括应用本身、MySQL数据库和Nginx静态资源服务器。
+
+### 部署步骤
+
+1. 确保已安装Docker和Docker Compose
+   ```
+   docker --version
+   docker-compose --version
+   ```
+
+2. 在项目根目录下运行以下命令启动所有服务
+   ```
+   docker-compose up -d
+   ```
+
+3. 服务说明
+   - Spring Boot应用：http://localhost:8080/api
+   - Nginx静态资源：http://localhost:8090
+   - MySQL数据库：localhost:3307 (用户名: zhixuanche_user, 密码: zhixuanche_pass)
+
+4. 停止所有服务
+   ```
+   docker-compose down
+   ```
+
+5. 查看日志
+   ```
+   docker logs zhixuanche_app    # 查看应用日志
+   docker logs zhixuanche_mysql  # 查看数据库日志
+   docker logs zhixuanche_nginx  # 查看Nginx日志
+   ```
+
+### 单独使用原有数据库
+
+如果您希望仅启动应用而使用已有的Docker数据库：
+
+1. 修改src/main/resources/application.yml中的数据库连接参数
+2. 使用以下命令单独构建和启动应用
+   ```
+   docker build -t zhixuanche-app .
+   docker run -d --name zhixuanche_app --network database_zhixuanche_net -p 8080:8080 zhixuanche-app
+   ```
+
+注意：确保应用与数据库容器处于同一网络中 
