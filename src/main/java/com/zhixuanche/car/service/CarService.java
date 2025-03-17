@@ -1,6 +1,7 @@
 package com.zhixuanche.car.service;
 
 import com.zhixuanche.car.entity.Car;
+import com.zhixuanche.car.entity.CarImage;
 
 import java.util.List;
 import java.util.Map;
@@ -136,4 +137,11 @@ public interface CarService {
      * @return 是否属于该经销商
      */
     boolean isCarBelongToDealer(Integer carId, Integer dealerId);
+
+    /**
+     * 获取车辆所有图片
+     * @param carId 车辆ID
+     * @return 图片列表
+     */
+    List<CarImage> getCarImages(Integer carId);
 } 

@@ -1,6 +1,7 @@
 package com.zhixuanche.car.service.impl;
 
 import com.zhixuanche.car.entity.Car;
+import com.zhixuanche.car.entity.CarImage;
 import com.zhixuanche.car.mapper.CarMapper;
 import com.zhixuanche.car.service.CarDetailService;
 import com.zhixuanche.car.service.CarImageService;
@@ -335,5 +336,15 @@ public class CarServiceImpl implements CarService {
     public boolean isCarBelongToDealer(Integer carId, Integer dealerId) {
         Car car = carMapper.selectById(carId);
         return car != null && car.getDealerId().equals(dealerId);
+    }
+
+    /**
+     * 获取车辆所有图片
+     * @param carId 车辆ID
+     * @return 图片列表
+     */
+    @Override
+    public List<CarImage> getCarImages(Integer carId) {
+        return carImageService.getCarImages(carId);
     }
 } 
